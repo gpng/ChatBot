@@ -82,7 +82,7 @@ function generateForexMessage(sender) {
     http.get(options, function(res) {
         res.on("data", function(chunk) {
             forexData = JSON.parse(chunk);
-	    sendForexMessage(sender, JSON.stringify(forexData.ForexRates[0]));
+	    sendForexMessage(sender, "Hi, OCBC buying at " + JSON.stringify(forexData.ForexRates[0].bankBuyingRateTT) + " and selling at " + JSON.stringify(forexData.ForexRates[0].bankSellingRate) + " for " + JSON.stringify(forexData.ForexRates[0].fromCurrency) + " to " + JSON.stringify(forexData.ForexRates[0].toCurrency) + ", units of " + JSON.stringify(forexData.ForexRates[0].unit) + ".");
         });
     }).on('error', function(e) {
         console.log("Got error: " + e.message);
