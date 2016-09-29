@@ -1,4 +1,4 @@
-
+var http = require('https')
 var express = require('express')
 var bodyParser = require('body-parser')
 var request = require('request')
@@ -36,6 +36,10 @@ app.post('/webhook/', function (req, res) {
         if (event.message && event.message.text) {
             text = event.message.text
             sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
+	    if (text == 'forex') {
+		generateForexMessage(sender)
+		continue
+	    }
         }
     }
     res.sendStatus(200)
@@ -44,6 +48,47 @@ app.post('/webhook/', function (req, res) {
 var token = "EAACzDSahiicBAEBoJOMBCoAKZCeYbBuJGqiOGKVmVXGzvAEQvRfgN5c6lc3hStRPazbqKCUvntjGcA1MBONGZCarTzBr99i6ZA8NgqvReK5TxY8vnx9EtsSeYfpywqtWBWDbtQVovH0ZAsYTKZBPN52HMfurwZCZCVQ0zDQv5GTPAZDZD"
 
 function sendTextMessage(sender, text) {
+    messageData = {
+        text:text
+    }
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: {access_token:token},
+        method: 'POST',
+        json: {
+            recipient: {id:sender},
+            message: messageData,
+        }
+    }, function(error, response, body) {
+        if (error) {
+            console.log('Error sending messages: ', error)
+        } else if (response.body.error) {
+            console.log('Error: ', response.body.error)
+        }
+    })
+}
+
+function generateForexMessage(sender) {
+    var options = {
+        host: 'api.ocbc.com',
+        port: 8243,
+        path: '/Forex/1.0',
+        headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer f30e2c57bd85bf0cd82bbee49d59fde2'
+        }
+    }
+    http.get(options, function(res) {
+        res.on("data", function(chunk) {
+            forexData = JSON.parse(chunk);
+	    sendForexMessage(sender, JSON.stringify(forexData.ForexRates[0]));
+        });
+    }).on('error', function(e) {
+        console.log("Got error: " + e.message);
+    });
+}
+
+function sendForexMessage(sender, text) {
     messageData = {
         text:text
     }
