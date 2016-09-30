@@ -131,7 +131,6 @@ function generatePromotionMessage(sender) {
     http.get(options, function(res) {
         res.on("data", function(chunk) {
             promotionData = JSON.parse(chunk);
-	    console.log(promotionData)
 	    sendPromotionMessage(sender, promotionData)
         });
     }).on('error', function(e) {
@@ -162,7 +161,7 @@ function sendPromotionMessage(sender, promotionData) {
     messageData.attachment.payload.elements[0].title = promotionData.promotions[0].name
     messageData.attachment.payload.elements[0].subtitle = promotionData.promotions[0].shortDesc
     messageData.attachment.payload.elements[0].image_url = promotionData.promotions[0].smallImg
-    messageData.attachment.payload.elements[0].buttons[0].url = promotionData.promotions[0].website
+    messageData.attachment.payload.elements[0].buttons[0].url = 'https://www.google.com.sg/'
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token:token},
