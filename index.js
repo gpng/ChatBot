@@ -160,8 +160,8 @@ function sendPromotionMessage(sender, promotionData) {
     // Edit message data with promotion data
     messageData.attachment.payload.elements[0].title = promotionData.promotions[0].name
     messageData.attachment.payload.elements[0].subtitle = promotionData.promotions[0].shortDesc
-    messageData.attachment.payload.elements[0].image_url = promotionData.promotions[0].smallImg
-    messageData.attachment.payload.elements[0].buttons[0].url = 'http://imgur.com/a/ZYOWS' 
+    messageData.attachment.payload.elements[0].image_url = 'http://imgur.com/a/ZYOWS'
+    messageData.attachment.payload.elements[0].buttons[0].url = promotionData.promotions[0].website 
     messageData.attachment.payload.elements[0].buttons[0].title = 'Visit ' + promotionData.promotions[0].name    
 
 request({
