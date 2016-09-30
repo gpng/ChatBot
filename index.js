@@ -162,7 +162,9 @@ function sendPromotionMessage(sender, promotionData) {
     messageData.attachment.payload.elements[0].subtitle = promotionData.promotions[0].shortDesc
     messageData.attachment.payload.elements[0].image_url = promotionData.promotions[0].smallImg
     messageData.attachment.payload.elements[0].buttons[0].url = promotionData.promotions[0].website 
-    request({
+    messageData.attachment.payload.elements[0].buttons[0].title = 'Visit ' + promotionData.promotions[0].name    
+
+request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token:token},
         method: 'POST',
