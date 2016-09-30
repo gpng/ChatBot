@@ -42,7 +42,7 @@ app.post('/webhook/', function (req, res) {
 		generateForexMessage(sender)
 		continue
 	    }
-	    if (text.toLowerCaese() == 'promotion esso petrol') {
+	    if (text.toLowerCase() == 'promotion esso petrol') {
 		sendTextMessage(sender, "Querying OCBC Credit Card promotions...")
 		generatePromotionMessage(sender)
 		continue
