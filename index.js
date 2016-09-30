@@ -150,7 +150,7 @@ function sendPromotionMessage(sender, promotionData) {
 		    'image_url': 'default_image_url',
 		    'buttons': [{
 			'type': 'web_url',
-			'url:': 'default_web_url_',
+			'url': 'default_web_url_',
 			'title': 'web url'
 		    }]
 		}]
@@ -161,7 +161,7 @@ function sendPromotionMessage(sender, promotionData) {
     messageData.attachment.payload.elements[0].title = promotionData.promotions[0].name
     messageData.attachment.payload.elements[0].subtitle = promotionData.promotions[0].shortDesc
     messageData.attachment.payload.elements[0].image_url = promotionData.promotions[0].smallImg
-    messageData.attachment.payload.elements[0].buttons[0].url = 'https://www.google.com.sg/'
+    messageData.attachment.payload.elements[0].buttons[0].url = promotionData.promotions[0].website 
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token:token},
