@@ -3,6 +3,7 @@ var express = require('express')
 var bodyParser = require('body-parser')
 var request = require('request')
 var app = express()
+var qs = require('querystring')
 
 app.set('port', (process.env.PORT || 5000))
 
@@ -39,6 +40,11 @@ app.post('/webhook/', function (req, res) {
 	    if (text.toLowerCase() == 'forex') {
 		sendTextMessage(sender, "Querying OCBC forex rates...")
 		generateForexMessage(sender)
+		continue
+	    }
+	    if (text.toLowerCaese() == 'promotion esso petrol') {
+		sendTextMessage(sender, "Querying OCBC Credit Card promotions...")
+		generatePromotionMessage(sender)
 		continue
 	    }
         }
@@ -109,3 +115,69 @@ function sendForexMessage(sender, text) {
         }
     })
 }
+
+
+function generatePromotionMessage(sender) {
+    var options = {
+        host: 'api.ocbc.com',
+        port: 8243,
+        path: '/Card_Promotions/1.0',
+        headers: {
+            'Accept': 'application/json',
+            'Authorization': 'Bearer f30e2c57bd85bf0cd82bbee49d59fde2'
+        }
+    }
+    options.path = options.path + '?' + qs.stringify({tag: 'petrol', name: 'esso'})
+    http.get(options, function(res) {
+        res.on("data", function(chunk) {
+            promotionData = JSON.parse(chunk);
+	    console.log(promotionData)
+	    sendPromotionMessage(sender, promotionData)
+        });
+    }).on('error', function(e) {
+        console.log("Got error: " + e.message);
+    });
+}
+
+function sendPromotionMessage(sender, promotionData) {
+    messageData = {
+	'attachment': {
+	    'type': 'template',
+	    'payload': {
+		'template_type': 'generic',
+		'elements': [{
+		    'title': 'First Card',
+		    'subtitle': 'Element #1 of an hscroll',
+		    'image_url': 'default_image_url',
+		    'buttons': [{
+			'type': 'web_url',
+			'url:': 'default_web_url_',
+			'title': 'web url'
+		    }]
+		}]
+	    }
+	}
+    }
+    // Edit message data with promotion data
+    messageData.attachment.payload.elements[0].title = promotionData.promotions[0].name
+    messageData.attachment.payload.elements[0].subtitle = promotionData.promotions[0].shortDesc
+    messageData.attachment.payload.elements[0].image_url = promotionData.promotions[0].smallImg
+    messageData.attachment.payload.elements[0].buttons[0].url = promotionData.promotions[0].website
+    request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: {access_token:token},
+        method: 'POST',
+        json: {
+            recipient: {id:sender},
+            message: messageData,
+        }
+    }, function(error, response, body) {
+        if (error) {
+            console.log('Error sending messages: ', error)
+        } else if (response.body.error) {
+            console.log('Error: ', response.body.error)
+        }
+    })
+}
+
+
