@@ -36,7 +36,7 @@ app.post('/webhook/', function (req, res) {
         if (event.message && event.message.text) {
             text = event.message.text
             sendTextMessage(sender, "Text received, echo: " + text.substring(0, 200))
-	    if (text == 'forex') {
+	    if (text.toLowerCase() == 'forex') {
 		sendTextMessage(sender, "Querying OCBC forex rates...")
 		generateForexMessage(sender)
 		continue
